@@ -29,7 +29,7 @@ def approximate_integral(n,rule):
     if(rule == "trapezoid"):
         integral = scipy.integrate.trapezoid(f(x), x)
     elif(rule == "simpson"):
-        integral = scipy.integrate.simpson(f(x), x)
+        integral = scipy.integrate.simpson(f(x), x=x)
 
     # i got pi + 1, when i evaluated the integral
     exact = np.pi + 1

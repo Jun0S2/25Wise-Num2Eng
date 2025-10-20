@@ -51,8 +51,8 @@ def fprim(x):
 x = 1 # it literally says x = 1 above
 fprim_exact = fprim(x)
 
-# h = 10**np.linspace(-1,-5,5)	  ## question (d): comment this line
-h = 10**np.linspace(-1,-12,12)   ## question (d): decomment this line
+h = 10**np.linspace(-1,-5,5)	  ## question (d): comment this line
+# h = 10**np.linspace(-1,-12,12)   ## question (d): decomment this line
 # when i comment & discomment the above steps, the graph goes from linear to folded(?) shape
 
 fprimF = forwardDiff(f,x,h)
