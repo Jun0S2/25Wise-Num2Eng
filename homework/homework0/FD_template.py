@@ -8,13 +8,15 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 def forwardDiff(f,x,h):
-	return  ## question (b): complete this line
+	## question (b): complete this line
+	return (f(x + h) - f(x)) / h;
 
 def centralDiff(f,x,h):
-	return  ## question (b): complete this line
+	## question (b): complete this line
+	return (f(x + h) - f(x - h)) / (2 * h);
 
 # Sanity checks
-def f_lin(x):
+def f_lin(x): # forward difference
 	return x
 
 def f_lin_prim(x):
@@ -27,8 +29,11 @@ def f_quad_prim(x):
 	return 2*x
 x = 1
 h = 0.1
-err_FD_lin =   ## question (b): complete this line
-err_CD_quad =  ## question (b): complete this line
+
+ ## question (b): complete this line
+err_FD_lin = np.abs((forwardDiff(f_lin,x,h) - f_lin_prim(x))/f_lin_prim(x))
+err_CD_quad  = np.abs((centralDiff(f_quad,x,h) - f_quad_prim(x))/f_quad_prim(x))
+
 print(f"Error of (FD) for a linear function: {err_FD_lin:.3e}")
 print(f"Error of (CD) for a quadratic function: {err_CD_quad:.3e}")
 
@@ -42,14 +47,16 @@ def fprim(x):
 	return np.exp(x)
 
 # Compute derivatives at x = 1
-x = "todo" ## Question (c): complete this line 
-fprim_exact = "todo" ## Question (c): complete this line 
+ ## Question (c): complete this line 
+x = 1 # it literally says x = 1 above
+fprim_exact = fprim(x)
 
-h = 10**np.linspace(-1,-5,5)	  ## question (d): comment this line
-#h = 10**np.linspace(-1,-12,12)   ## question (d): decomment this line
+# h = 10**np.linspace(-1,-5,5)	  ## question (d): comment this line
+h = 10**np.linspace(-1,-12,12)   ## question (d): decomment this line
+# when i comment & discomment the above steps, the graph goes from linear to folded(?) shape
 
 fprimF = forwardDiff(f,x,h)
-fprimC = "todo" ## Question (c): complete this line 
+fprimC = centralDiff(f,x,h) ## Question (c): complete this line 
 
 errF = np.abs((fprimF - fprim_exact)/fprim_exact)
 errC = np.abs((fprimC - fprim_exact)/fprim_exact)
