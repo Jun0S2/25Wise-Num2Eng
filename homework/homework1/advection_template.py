@@ -11,6 +11,7 @@ import os
 
 # Define the test problem:
 # u_t + a u_x = 0
+# (d)
 def get_testproblem():
     testproblem = {}
 
@@ -100,7 +101,7 @@ def graph_solution(U, x, time, uexact, xL, xR, method, initialize, final_time):
 
 #### Question (a) 
 def compute_dt(CFL, a, dx):
-    ## TODO 
+    dt = CFL * dx / a
     return dt
 
 
@@ -108,14 +109,20 @@ def compute_dt(CFL, a, dx):
 #### Question (b)
 #
 def update_ftcs(U, a, dt, dx):
-    ## TODO 
+    U_temp = U.copy()
+    U_temp[1:-1] = U[1:-1] - (a * dt / (2*dx)) * (U[2:] - U[:-2])
+    U[:] = U_temp
 
 def update_upwind(U, a, dt, dx):
-    ## TODO
+    U_temp = U.copy()
+    U_temp[1:-1] = U[1:-1] - (a * dt / dx) * (U[1:-1] - U[:-2])
+    U[:] = U_temp
     
 
+#### Question (c)
 def compute_error(x, time, uexact, U):
-    ## TODO
+    U_exact = uexact(x, time)
+    err_max = np.max(np.abs(U - U_exact))
     return err_max
 #
 #######
