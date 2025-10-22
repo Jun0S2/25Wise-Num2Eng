@@ -9,6 +9,9 @@ import numpy as np
 import scipy
 import time
 import os
+import time # for the t_solution error resolution
+from scipy.sparse import diags
+from scipy.sparse.linalg import spsolve
 
 # Define the test problem:
 # only -u''(x) = f(x)
@@ -25,11 +28,11 @@ def get_testproblem(testfunction):
     
     # right-hand-side function and exact solution
     if (testfunction == "const"):
-        testproblem["f"] = lambda x: x * 0 + 1
-        testproblem["uexact"] = ## TODO
+        testproblem["f"] = lambda x: x * 0 + 1 # f(x) = 1
+        testproblem["uexact"] = lambda x: 0.5 * x * (1 - x)  # u(x) = 1/2x(1 - x)
     elif (testfunction == "sin"):
-        testproblem["f"] = lambda x: np.sin(np.pi * x)
-        testproblem["uexact"] = ## TODO
+        testproblem["f"] = lambda x: np.sin(np.pi * x) # f(x) = sin pi x
+        testproblem["uexact"] = lambda x : np.sin(np.pi * x) / (np.pi ** 2)  # u(x) = sin pi x / pi^2
     else:
         raise Exception(
             'Stop in testproblem. Choice of test problem does not exist')
@@ -79,14 +82,15 @@ def graph(U_comp, x_plot, uexact, xL, xR):
 
 def get_rhs_diag(f,N,x,dx):
     # create right-hand-side vector
-    rhs = ## TODO 
-
+    # x[0] = xL, x[N+1] = xR, 내부점 x[1:N]
+    rhs = dx**2 * f(x[1:-1])
+    
     # compute diagonals of matrix and store each of them in a vector,
     # which we will use later on to set up the matrix
-    l = ## TODO
-    d = ## TODO
-    r = ## TODO
-
+    l = -np.ones(N-1)
+    d = 2*np.ones(N)
+    r = -np.ones(N-1)
+    
     return rhs, l, d, r
 
 def my_driver(solver_type, testproblem, parameters, N):
@@ -114,9 +118,16 @@ def my_driver(solver_type, testproblem, parameters, N):
        
 
         # create full matrix
-        matrix = np.zeros((N, N))
+        matrix = np.zeros((N, N)) # init with 0 NxN array
+        # zip : pairs elements from two lists together
+        # [l,d,r] : left, center, right diagonal values
+        # [-1,0,1] : offsets(position) for diagonals -> 0: main diagonal, -1: lower diagonal, 1: upper diagonal
+        # np.diag(etries,offset) : add entries vectors to offset diagonals of matrix
         for entries, offset in zip([l, d, r], [-1, 0, 1]):
-            matrix += np.diag(entries, offset)
+            matrix += np.diag(entries, offset) # add each diagonal to the matrix -> tridiagonal matrix
+
+        # start time rec.
+        t0 = time.time()
 
         # note: the result of the last three lines can also be accomplished
         # matrix = functools.reduce(
@@ -125,10 +136,24 @@ def my_driver(solver_type, testproblem, parameters, N):
         # solve
         solution = np.linalg.solve(matrix, rhs)
 
+        # end time rec.
+        t_solution = time.time() - t0
        
 
     elif solver_type == "sparse":
-        ## TODO 
+        # create sparse tridiagonal matrix
+        offsets = [-1, 0, 1]
+        data = [l, d, r]
+        sparse_matrix = diags(data, offsets, format='csr')
+        
+        # start timer
+        t0 = time.time()
+        
+        # solve sparse system
+        solution = spsolve(sparse_matrix, rhs)
+        
+        # end timer
+        t_solution = time.time() - t0
 
 
     # crate full solution (including boundary nodes)

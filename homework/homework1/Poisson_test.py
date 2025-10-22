@@ -17,7 +17,7 @@ def test_exact_solution_const():
 ## Test for (b)
 # Check the rhs and diagonal
 def test_rhs():
-    testproblem = program.get_testproblem("const")
+    testproblem = program.get_testproblem("const") # or sin
     parameters = program.define_default_parameters()
     N = parameters["N"]
     xL = testproblem["xL"]
